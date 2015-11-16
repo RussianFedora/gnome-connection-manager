@@ -5,5 +5,6 @@ Comment=Tabbed SSH connection manager
 Exec=gnome-connection-manager
 Icon=gnome-connection-manager
 Terminal=false
+StartupWMClass=Gnome Connection Manager
 Type=Application
 StartupNotify=true
