@@ -18,6 +18,7 @@ BuildArch:	noarch
 BuildRequires:	vte
 BuildRequires:	python
 BuildRequires:	desktop-file-utils
+BuildRequires:	gettext
 
 Requires:	vte
 Requires:	expect
