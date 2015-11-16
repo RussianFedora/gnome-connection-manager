@@ -1,0 +1,120 @@
+diff -urN gcm-1.1.0.orig/gnome_connection_manager.py GnomeConnectionManager/gnome_connection_manager.py
+--- gcm-1.1.0.orig/gnome_connection_manager.py	2015-11-16 16:43:19.513897930 +0300
++++ GnomeConnectionManager/gnome_connection_manager.py	2015-11-16 16:34:05.913949425 +0300
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python2
+ # -*- coding: UTF-8 -*-
+ 
+ # Python module gnome_connection_manager.py
+@@ -204,7 +204,7 @@
+ app_web = "http://www.kuthulu.com/gcm"
+ app_fileversion = "1"
+ 
+-BASE_PATH = os.path.dirname(os.path.abspath(sys.argv[0]))
++BASE_PATH = '/usr/share/gnome-connection-manager'
+ 
+ SSH_BIN = 'ssh'
+ TEL_BIN = 'telnet'
+@@ -247,7 +247,7 @@
+ 
+ ICON_PATH = BASE_PATH + "/icon.png"
+ 
+-glade_dir = ""
++glade_dir = BASE_PATH
+ locale_dir = BASE_PATH + "/lang"
+ 
+ bindtextdomain(domain_name, locale_dir)
+@@ -673,6 +673,23 @@
+                 cb.set_text(host.host)
+                 cb.store()
+             return True
++        elif item == 'SCPF': #COPY TO CLIPDOARD SCP STRING OF DONOR HOST
++            if self.treeServers.get_selection().get_selected()[1]!=None and not self.treeModel.iter_has_child(self.treeServers.get_selection().get_selected()[1]):
++                host = self.treeModel.get_value(self.treeServers.get_selection().get_selected()[1],1)
++                cb = gtk.Clipboard()
++                scpstr = "scp " + host.user + "@" + host.host + ":"
++                cb.set_text(scpstr)
++                cb.store()
++            return True
++        elif item == 'SCPT': #COPY TO CLIPDOARD SCP STRING OF RECEPIENT HOST
++            if self.treeServers.get_selection().get_selected()[1]!=None and not self.treeModel.iter_has_child(self.treeServers.get_selection().get_selected()[1]):
++                host = self.treeModel.get_value(self.treeServers.get_selection().get_selected()[1],1)
++                cb = gtk.Clipboard()
++                scpstr = "scp ./ " + host.user + "@" + host.host + ":"
++                cb.set_text(scpstr)
++                cb.store()
++            return True
++
+         elif item == 'D': #DUPLICATE HOST
+             if self.treeServers.get_selection().get_selected()[1]!=None and not self.treeModel.iter_has_child(self.treeServers.get_selection().get_selected()[1]):                
+                 selected = self.treeServers.get_selection().get_selected()[1]            
+@@ -849,7 +866,19 @@
+         self.popupMenuFolder.append(menuItem)
+         menuItem.connect("activate", self.on_popupmenu, 'H')
+         menuItem.show()
+-        
++
++        self.popupMenuFolder.mnuCopyAddress = menuItem = gtk.ImageMenuItem(_("Copy SCP string to clipboard <--"))
++        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_COPY, gtk.ICON_SIZE_MENU))
++        self.popupMenuFolder.append(menuItem)
++        menuItem.connect("activate", self.on_popupmenu, 'SCPF')
++        menuItem.show()
++
++        self.popupMenuFolder.mnuCopyAddress = menuItem = gtk.ImageMenuItem(_("Copy SCP string to clipboard -->"))
++        menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_COPY, gtk.ICON_SIZE_MENU))
++        self.popupMenuFolder.append(menuItem)
++        menuItem.connect("activate", self.on_popupmenu, 'SCPT')
++        menuItem.show()
++
+         self.popupMenuFolder.mnuAdd = menuItem = gtk.ImageMenuItem(_("Agregar Host"))
+         menuItem.set_image(gtk.image_new_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_MENU))
+         self.popupMenuFolder.append(menuItem)
+diff -urN gcm-1.1.0.orig/lang/ru_RU.po GnomeConnectionManager/lang/ru_RU.po
+--- gcm-1.1.0.orig/lang/ru_RU.po	2015-11-16 16:43:19.513897930 +0300
++++ GnomeConnectionManager/lang/ru_RU.po	2015-11-16 17:00:14.682569963 +0300
+@@ -299,7 +299,7 @@
+ #: ../gnome_connection_manager.py:1974 ../gnome-connection-manager.glade:271
+ #: ../gnome_connection_manager.py:2143 ../gnome-connection-manager.glade:410
+ msgid "Local"
+-msgstr "Локальный"
++msgstr "Локальная"
+ 
+ #: ../gnome_connection_manager.py:702 ../gnome-connection-manager.glade.h:23
+ #: ../gnome_connection_manager.py:1140 ../gnome-connection-manager.glade:1206
+@@ -449,7 +449,7 @@
+ #: ../gnome_connection_manager.py:2186 ../gnome_connection_manager.py:2287
+ #: ../gnome_connection_manager.py:2406 ../gnome_connection_manager.py:2576
+ msgid "Confirmar al salir"
+-msgstr "Запрос подтверждения при выходи"
++msgstr "Запрос подтверждения при выходе"
+ 
+ #: ../gnome_connection_manager.py:1431 ../gnome_connection_manager.py:1443
+ #: ../gnome_connection_manager.py:1642 ../gnome_connection_manager.py:1807
+@@ -1135,7 +1135,7 @@
+ 
+ #: ../gnome-connection-manager.glade:122
+ msgid "Salir"
+-msgstr "выходи"
++msgstr "Выход"
+ 
+ #: ../gnome_connection_manager.py:598 ../gnome_connection_manager.py:666
+ #: ../gnome_connection_manager.py:684 ../gnome_connection_manager.py:737
+@@ -1145,7 +1145,7 @@
+ 
+ #: ../gnome-connection-manager.glade:122
+ msgid "_Salir"
+-msgstr "_выходи"
++msgstr "_Выход"
+ 
+ #: ../gnome-connection-manager.glade:1348
+ #: ../gnome-connection-manager.glade:1292
+@@ -1240,7 +1240,7 @@
+ 
+ #: ../gnome-connection-manager.glade:147 ../gnome-connection-manager.glade:274
+ msgid "_Ver"
+-msgstr "смотреть"
++msgstr "Вид"
+ 
+ #: ../gnome-connection-manager.glade:155 ../gnome-connection-manager.glade:282
+ msgid "Mostrar Toolbar"
